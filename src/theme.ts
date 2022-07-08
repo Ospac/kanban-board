@@ -10,7 +10,7 @@ export const lightTheme:DefaultTheme = {
     bgColor: "#4B5D67",
     boardColor: "#FF06B7",
     boardDraggingFromColor: "#3C2C3E",
-    boardDraggingToColor: "#5E7682",
+    boardDraggingToColor: "#2E2230",
     boardContentColor : "#3C2C3E",
     cardColor: "#AFFC41",
     draggingCardColor: "#F4DBD8",
