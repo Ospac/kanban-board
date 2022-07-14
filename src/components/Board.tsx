@@ -18,7 +18,7 @@ interface IAreaProps{
     isDraggingOver : boolean,
     isDraggingFromThisWith: boolean
 }
-const Area = styled.div<IAreaProps>`
+export const Area = styled.div<IAreaProps>`
     background-color: ${props => props.isDraggingOver? props.theme.boardDraggingToColor : props.isDraggingFromThisWith? props.theme.boardDraggingFromColor : props.theme.boardContentColor};
     flex-grow: 1;
     padding: 10px 15px;

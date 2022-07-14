@@ -39,7 +39,6 @@ export function BoardTitle({boardId} : IBoardTitleProps){
             newTitle : boards[boardId]
         }
     });
-    console.log(boards);
     return <TitleForm onSubmit={handleSubmit(onValid)}>
         <input 
         {...register("newTitle", {required : true})}

@@ -1,10 +1,11 @@
 import styled from 'styled-components';
-import {DragDropContext, DropResult} from 'react-beautiful-dnd';
+import {DragDropContext, DraggableLocation, DropResult} from 'react-beautiful-dnd';
 import { createGlobalStyle } from 'styled-components'
 import { useRecoilState } from 'recoil';
 import { IToDoState, toDoState } from './atoms';
 import Board from './components/Board';
 import AddBoard from './components/AddBoard';
+import DeleteBoard from './components/DeleteBoard';
 
 
 const GlobalStyle = createGlobalStyle`
@@ -84,22 +85,39 @@ const Boards = styled.div`
   gap: 15px;
   grid-template-columns: repeat(3, 1fr);
 `
-
+interface IOnKabanBoard {
+  destination : DraggableLocation,
+  source : DraggableLocation,
+  allBoards : IToDoState
+}
 
 function App() {
-  
   const [toDos, setTodos] = useRecoilState(toDoState);
+  const onDragEndToDeleteBoard = ({destination, source, allBoards} : IOnKabanBoard) => {
+    const copyToDos : IToDoState = {};
+    Object.keys(allBoards).forEach((boardKey) => {
+      copyToDos[boardKey] = [...allBoards[boardKey]];
+    })
+    copyToDos[source.droppableId].splice(source.index, 1);
+    return copyToDos;
+  }
+  const onDragEndToKanbanBoard = ({destination, source, allBoards} : IOnKabanBoard ) => {
+    const copyToDos : IToDoState = {};
+    Object.keys(allBoards).forEach((boardKey) => {
+      copyToDos[boardKey] = [...allBoards[boardKey]];
+    })
+    const splicedObject = copyToDos[source.droppableId].splice(source.index, 1);
+    copyToDos[destination.droppableId].splice(destination.index, 0, splicedObject[0]);
+    return copyToDos;
+  }
   const onDragEnd = (info : DropResult) => {
-    setTodos((allBoards) => {
+    setTodos((allBoards) => {      
       const {destination, source} = info;      
       if(!destination) return allBoards;
-      const copyToDos : IToDoState = {};
-      Object.keys(allBoards).forEach((boardKey) => {
-        copyToDos[boardKey] = [...allBoards[boardKey]];
-      })
-      const splicedObject = copyToDos[source.droppableId].splice(source.index, 1);
-      copyToDos[destination.droppableId].splice(destination.index, 0, splicedObject[0]);
-      return copyToDos;
+      if(destination.droppableId === "deleteBoard"){
+        return onDragEndToDeleteBoard({destination, source, allBoards}); 
+      }
+      return onDragEndToKanbanBoard({destination, source, allBoards})
     })
   };
   return (
@@ -110,6 +128,7 @@ function App() {
           <Boards>
             {Object.keys(toDos).map(boardId => <Board key={boardId} boardId={boardId} toDos={toDos[boardId]}/>)}
             <AddBoard/>
+            <DeleteBoard/>
           </Boards>
         </Wrapper>
       </DragDropContext>
