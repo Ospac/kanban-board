@@ -1,9 +1,9 @@
-import { useRef } from 'react';
 import {Droppable} from 'react-beautiful-dnd';
 import { useForm } from 'react-hook-form';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
-import { IToDo, toDoState } from '../atoms';
+import { boardState, IToDo, toDoState } from '../atoms';
+import { BoardTitle } from './BoardTitle';
 import DraggableCard from './DraggableCard';
 
 const Wrapper = styled.div`
@@ -21,20 +21,18 @@ interface IAreaProps{
 const Area = styled.div<IAreaProps>`
     background-color: ${props => props.isDraggingOver? props.theme.boardDraggingToColor : props.isDraggingFromThisWith? props.theme.boardDraggingFromColor : props.theme.boardContentColor};
     flex-grow: 1;
-    padding: 10px 10px;
+    padding: 10px 15px;
     transition: background-color 0.3s ease-in-out;
 `
-const Title = styled.div`
-    font-size: 18px;
-    font-weight: bold;
-    text-align: center;
-    padding-bottom: 10px;
-
-`
-const Form = styled.form`
+const TaskForm = styled.form`
     width: 100%;
     input{
         width : 100%;
+        height: 100%;
+        padding: 4px;
+        text-align: center;
+        border: 0px;
+        border-radius: 5px;
     };
 `;
 interface IBoardProps {
@@ -47,7 +45,8 @@ interface IForm {
 function Board({toDos, boardId} : IBoardProps){
     const { register, setValue, handleSubmit} = useForm<IForm>();
     const setToDos = useSetRecoilState(toDoState);
-    const onValid = ({toDo} : IForm) => {
+    const boards = useRecoilValue(boardState);
+    const onTaskFormValid = ({toDo} : IForm) => {
         const newToDos = {
             id : Date.now(),
             text : toDo
@@ -61,18 +60,18 @@ function Board({toDos, boardId} : IBoardProps){
         setValue("toDo", "");
     }
     return <Wrapper>
-            <Title>{boardId}</Title>
-            <Form onSubmit={handleSubmit(onValid)}>
+            <BoardTitle boardId={boardId}></BoardTitle>
+            <TaskForm onSubmit={handleSubmit(onTaskFormValid)}>
                 <input
                 {...register("toDo", {required : true})}
-                type='text' 
-                placeholder={`Add Task On ${boardId}`}></input>
-            </Form>
+                type='text'
+                placeholder={boards[boardId] ? `Add Task On ${boards[boardId]}` : "Name this board"}></input>
+            </TaskForm>
             <Droppable droppableId={boardId}>{(magic, snapshot) => 
                 <Area 
                 isDraggingOver={snapshot.isDraggingOver}
                 isDraggingFromThisWith={Boolean(snapshot.draggingFromThisWith)}
-                ref={magic.innerRef }
+                ref={magic.innerRef}
                 {...magic.droppableProps}>
                     {toDos.map((todo, index) => 
                         <DraggableCard key={todo.id} toDoText={todo.text} toDoId={todo.id} index={index}/>

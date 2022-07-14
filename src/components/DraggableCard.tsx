@@ -5,7 +5,8 @@ import React from 'react';
 const Card = styled.div<{isDragging : boolean}>`
   padding: 5px 10px;
   border-radius: 5px;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
+  font-size: 13px;
   background-color: ${props=> props.isDragging? props.theme.draggingCardColor : props.theme.cardColor};
   box-shadow: ${props=> props.isDragging? "2px 0px 5px rgba(0,0,0,0.5)" : "none"};
   

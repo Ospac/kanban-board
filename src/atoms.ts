@@ -1,4 +1,4 @@
-import { atom } from "recoil";
+import { atom} from "recoil";
 export interface IToDo{
     text : string,
     id : number,
@@ -6,10 +6,22 @@ export interface IToDo{
 export interface IToDoState{
     [key : string] : IToDo[]
 }
+interface IBoardState{
+    [id : string] : string
+}
+export const boardState = atom<IBoardState>({
+    key : "boards",
+    default: {
+        1 : 'to do', // id : title
+        2 : 'done',
+        3 : 'doing',
+    }
+})
 export const toDoState = atom<IToDoState>({
     key: "toDos",
     default: {
-        "to do" :[ {text : "abc", id : 1}],
-        "doing" :[ {text : "ab", id : 2}]
+        1 :[], // boardId : IToDo[]
+        2 :[],
+        3 :[],
     },
 })

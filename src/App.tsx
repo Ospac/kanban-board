@@ -1,9 +1,10 @@
 import styled from 'styled-components';
-import {DragDropContext, Droppable, Draggable, DropResult} from 'react-beautiful-dnd';
+import {DragDropContext, DropResult} from 'react-beautiful-dnd';
 import { createGlobalStyle } from 'styled-components'
 import { useRecoilState } from 'recoil';
 import { IToDoState, toDoState } from './atoms';
 import Board from './components/Board';
+import AddBoard from './components/AddBoard';
 
 
 const GlobalStyle = createGlobalStyle`
@@ -86,9 +87,9 @@ const Boards = styled.div`
 
 
 function App() {
+  
   const [toDos, setTodos] = useRecoilState(toDoState);
   const onDragEnd = (info : DropResult) => {
-    console.log(info);
     setTodos((allBoards) => {
       const {destination, source} = info;      
       if(!destination) return allBoards;
@@ -108,6 +109,7 @@ function App() {
         <Wrapper>
           <Boards>
             {Object.keys(toDos).map(boardId => <Board key={boardId} boardId={boardId} toDos={toDos[boardId]}/>)}
+            <AddBoard/>
           </Boards>
         </Wrapper>
       </DragDropContext>
