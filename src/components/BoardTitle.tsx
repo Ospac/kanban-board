@@ -1,20 +1,15 @@
 import { useForm } from "react-hook-form";
-import { useRecoilState} from "recoil";
+import { useSetRecoilState} from "recoil";
 import styled from 'styled-components';
 import { boardState} from "../atoms";
 
-const Title = styled.div`
-    font-size: 18px;
-    font-weight: bold;
-    text-align: center;
-    padding-bottom: 10px;
-`
 const TitleForm = styled.form`
     input{
         background-color: ${props => props.theme.boardColor};
         font-size: 18px;
         font-weight: bold;
         text-align: center;
+        padding-bottom: 10px;
         border: 0px;
     }
 `;
@@ -22,24 +17,30 @@ interface IForm{
     newTitle : string
 }
 interface IBoardTitleProps{
-    boardId: string;
+    boardTitle : string,
+    boardId : number
 }
-export function BoardTitle({boardId} : IBoardTitleProps){
-    const [boards, setBoards] = useRecoilState(boardState);
+export function BoardTitle({boardTitle, boardId} : IBoardTitleProps){
+    const setBoards = useSetRecoilState(boardState);
     const onValid = ({newTitle} : IForm) =>{
-        setBoards(board => {
-            return {
-                ...board,
-                [boardId] : newTitle
-            }
+        setBoards(prev => {
+            const newState = prev.map(board => 
+                board.boardId === boardId?
+                {
+                    ...board,
+                    title : newTitle
+                }
+                : board
+            )
+            return newState
         })
     }
-    const { register,handleSubmit} = useForm<IForm>({
+    const { register, handleSubmit } = useForm<IForm>({
         defaultValues: {
-            newTitle : boards[boardId]
+            newTitle : boardTitle
         }
     });
-    return <TitleForm onSubmit={handleSubmit(onValid)}>
+    return <TitleForm onSubmit={ handleSubmit(onValid) }>
         <input 
         {...register("newTitle", {required : true})}
         placeholder="type title"

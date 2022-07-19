@@ -1,27 +1,55 @@
-import { atom} from "recoil";
+import { atom } from "recoil";
+import { recoilPersist } from 'recoil-persist'
+
+export enum boardTypes {
+    "BOARD" = "BOARD",
+    "ADD" = "ADD",
+    "DELETE"  = "DELETE",
+  }
 export interface IToDo{
     text : string,
     id : number,
 }
-export interface IToDoState{
-    [key : string] : IToDo[]
+export interface IBoard{
+    title : string,
+    boardId : number,
+    boardType :boardTypes,
+    content : IToDo[],
+    
 }
-interface IBoardState{
-    [id : string] : string
-}
-export const boardState = atom<IBoardState>({
+const { persistAtom } = recoilPersist()
+export const boardState = atom<IBoard[]>({
     key : "boards",
-    default: {
-        1 : 'to do', // id : title
-        2 : 'done',
-        3 : 'doing',
-    }
+    effects_UNSTABLE: [persistAtom],
+    default: [
+            {
+                title : '',
+                boardId: 0,
+                boardType: boardTypes.ADD,
+                content: []
+            },
+            {
+                title : '',
+                boardId: 1,
+                boardType: boardTypes.DELETE,
+                content: []
+            },
+
+        // {
+        //     title: 'TO_DO',
+        //     boardId: 1,
+        //     content: [
+              
+        //     ],
+        // },
+        // {
+        //     title: 'DOING',
+        //     boardId: 2,
+        //     content: [
+               
+        //     ],
+        // }
+        
+    ]
 })
-export const toDoState = atom<IToDoState>({
-    key: "toDos",
-    default: {
-        1 :[], // boardId : IToDo[]
-        2 :[],
-        3 :[],
-    },
-})
+

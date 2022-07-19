@@ -1,12 +1,12 @@
-import { Droppable } from 'react-beautiful-dnd';
-import { useRecoilState } from 'recoil';
+import { Draggable, Droppable } from 'react-beautiful-dnd';
 import styled from 'styled-components'
-import { toDoState } from '../atoms';
+import { droppableTypes } from '../App';
 
 const Wrapper = styled.div`
   background-color: ${props => props.theme.boardColor};
   border-radius: 5px;
   min-height: 200px;
+  min-width: 233px;
   display: flex;
   font-size: 50px;
   font-weight: bold;
@@ -26,20 +26,28 @@ const Area = styled.div<IAreaProps>`
     justify-content: center;
     align-items: center;
 `
-function DeleteBoard(){
-    return <Wrapper>
-        <Droppable droppableId={"deleteBoard"}>{(magic, snapshot) => 
-            <Area
-            isDraggingOver={snapshot.isDraggingOver}
-            isDraggingFromThisWith={Boolean(snapshot.draggingFromThisWith)}
-            ref={magic.innerRef}
-            {...magic.droppableProps}>
-                🗑              
-            {magic.placeholder}
-            </Area>
+interface DeleteBoardProps{
+    index : number,
+}
+function DeleteBoard({index} : DeleteBoardProps){
+    return <Draggable key={index} draggableId={String(index)} index={index}>
+        {(magic, snapshot) =>
+        <Wrapper ref={magic.innerRef }{...magic.dragHandleProps}{...magic.draggableProps}>
+            <Droppable  droppableId={"deleteBoard"}>
+                {(magic, snapshot) => 
+                    <Area
+                    isDraggingOver={snapshot.isDraggingOver}
+                    isDraggingFromThisWith={Boolean(snapshot.draggingFromThisWith)}
+                    ref={magic.innerRef}
+                    {...magic.droppableProps}>
+                        🗑              
+                    {magic.placeholder}
+                    </Area>
+                }
+            </Droppable>
+        </Wrapper>
         }
-        </Droppable>
-    </Wrapper>
+    </Draggable>
 }
 
 export default DeleteBoard

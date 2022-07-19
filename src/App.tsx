@@ -1,8 +1,8 @@
 import styled from 'styled-components';
-import {DragDropContext, DraggableLocation, DropResult} from 'react-beautiful-dnd';
+import {DragDropContext,  Droppable, DropResult} from 'react-beautiful-dnd';
 import { createGlobalStyle } from 'styled-components'
 import { useRecoilState } from 'recoil';
-import { IToDoState, toDoState } from './atoms';
+import { boardState, boardTypes, IBoard} from './atoms';
 import Board from './components/Board';
 import AddBoard from './components/AddBoard';
 import DeleteBoard from './components/DeleteBoard';
@@ -69,67 +69,94 @@ const GlobalStyle = createGlobalStyle`
     border-spacing: 0;
   }
 `
+
 const Wrapper = styled.div`
   display: flex;
-  max-width: 680px;
+  min-width: 680px;
   width: 100%;
   height: 100vh;
   margin: 0 auto;
   justify-content: center;
   align-items: center;
-
 `
 const Boards = styled.div`
-  display: grid;
+  /* display: grid; */
+  display: flex;
+  flex-direction: row;
   width: 100%;
   gap: 15px;
-  grid-template-columns: repeat(3, 1fr);
+  /* grid-template-columns: repeat(3, 1fr); */
 `
 interface IOnKabanBoard {
-  destination : DraggableLocation,
-  source : DraggableLocation,
-  allBoards : IToDoState
+    info : DropResult
+    allBoards : IBoard[]
 }
-
+export enum droppableTypes {
+  "BOARD" = "BOARD",
+  "CARD" = "CARD",
+  "DELETE"  = "DELETE",
+}
 function App() {
-  const [toDos, setTodos] = useRecoilState(toDoState);
-  const onDragEndToDeleteBoard = ({destination, source, allBoards} : IOnKabanBoard) => {
-    const copyToDos : IToDoState = {};
-    Object.keys(allBoards).forEach((boardKey) => {
-      copyToDos[boardKey] = [...allBoards[boardKey]];
-    })
-    copyToDos[source.droppableId].splice(source.index, 1);
-    return copyToDos;
-  }
-  const onDragEndToKanbanBoard = ({destination, source, allBoards} : IOnKabanBoard ) => {
-    const copyToDos : IToDoState = {};
-    Object.keys(allBoards).forEach((boardKey) => {
-      copyToDos[boardKey] = [...allBoards[boardKey]];
-    })
-    const splicedObject = copyToDos[source.droppableId].splice(source.index, 1);
-    copyToDos[destination.droppableId].splice(destination.index, 0, splicedObject[0]);
-    return copyToDos;
+  const [boards, setBoards] = useRecoilState(boardState);
+  const onDragEndToDeleteBoard = ({info, allBoards} : IOnKabanBoard) => {
+    const {destination, source, type} = info;     
+    // const copyToDos : IBoard[] = [];
+    // Object.keys(allBoards).forEach((boardKey) => {
+    //   copyToDos[boardKey] = [...allBoards[boardKey]];
+    // })
+    // copyToDos[source.droppableId].splice(source.index, 1);
+    // return copyToDos;
   }
   const onDragEnd = (info : DropResult) => {
-    setTodos((allBoards) => {      
-      const {destination, source} = info;      
-      if(!destination) return allBoards;
-      if(destination.droppableId === "deleteBoard"){
-        return onDragEndToDeleteBoard({destination, source, allBoards}); 
+    const {destination, source, type} = info;
+    console.log(info);
+    setBoards((boards) => {       
+      if(!destination) return boards;
+      if(type === droppableTypes.BOARD){
+        const newState = [...boards];
+        const destBoard = newState[source.index];
+        newState.splice(source.index, 1);
+        newState.splice(destination.index, 0, destBoard);
+        return newState;
       }
-      return onDragEndToKanbanBoard({destination, source, allBoards})
+      else if(type === droppableTypes.CARD){
+        const newState = boards.map( board =>{
+            return {
+              ...board,
+              content: [
+                ...board.content
+              ]}})
+        const sourceBoardIdx = newState.findIndex(({boardId}) => String(boardId) === source.droppableId);
+        const destBoardIdx = newState.findIndex(({boardId}) => String(boardId) === destination.droppableId);
+        const splicedObject = newState[sourceBoardIdx].content.splice(source.index, 1);
+        newState[destBoardIdx].content.splice(destination.index, 0, splicedObject[0]);
+        return newState;
+      }
+      return boards
     })
+    
   };
   return (
     <>
       <GlobalStyle/>
       <DragDropContext onDragEnd={onDragEnd}>
         <Wrapper>
-          <Boards>
-            {Object.keys(toDos).map(boardId => <Board key={boardId} boardId={boardId} toDos={toDos[boardId]}/>)}
-            <AddBoard/>
-            <DeleteBoard/>
+          <Droppable type={droppableTypes.BOARD} droppableId={"boardMain"} direction='horizontal'>
+          {(magic, snapshot) => 
+            <Boards ref={magic.innerRef} {...magic.droppableProps}>
+            {boards.map((board, index) => {
+              return board.boardType ===  boardTypes.BOARD?
+              <Board key={index} boardData={board} index={index}/>
+              :
+              board.boardType ===  boardTypes.ADD?
+              <AddBoard key={index} index={index}/>
+              :
+              <DeleteBoard key={index} index={index}/>
+            })}
+            {magic.placeholder}
           </Boards>
+          }
+          </Droppable>
         </Wrapper>
       </DragDropContext>
     </>

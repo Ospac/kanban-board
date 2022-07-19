@@ -17,7 +17,6 @@ interface IDraggableCard{
     index : number,
 }
 function DraggableCard({toDoText, toDoId, index} : IDraggableCard) {
-    // console.log(todo + " is rendered");
     return <Draggable key={toDoId} draggableId={String(toDoId)} index={index}>
         {(magic, snapshot) => 
         <Card isDragging={snapshot.isDragging} ref={magic.innerRef }
