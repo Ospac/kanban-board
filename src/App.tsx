@@ -5,7 +5,6 @@ import { useRecoilState } from 'recoil';
 import { boardState, boardTypes, IBoard} from './atoms';
 import Board from './components/Board';
 import AddBoard from './components/AddBoard';
-import DeleteBoard from './components/DeleteBoard';
 
 
 const GlobalStyle = createGlobalStyle`
@@ -70,27 +69,37 @@ const GlobalStyle = createGlobalStyle`
   }
 `
 
+const Title = styled.div`
+  font-size: 72px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  padding : 10px 0;
+  background-color: ${props => props.theme.boardColor};
+  color: #007c13;
+  text-align: center;
+  
+`
 const Wrapper = styled.div`
   display: flex;
+  flex-direction: column;
   min-width: 680px;
-  width: 100%;
+  width: 90%;
   height: 100vh;
   margin: 0 auto;
   justify-content: center;
-  align-items: center;
+  /* align-items: center; */
+  overflow: auto;
+  white-space: nowrap;
+
 `
 const Boards = styled.div`
-  /* display: grid; */
   display: flex;
   flex-direction: row;
   width: 100%;
   gap: 15px;
-  /* grid-template-columns: repeat(3, 1fr); */
+  overflow-x: auto;
 `
-interface IOnKabanBoard {
-    info : DropResult
-    allBoards : IBoard[]
-}
+
 export enum droppableTypes {
   "BOARD" = "BOARD",
   "CARD" = "CARD",
@@ -98,15 +107,6 @@ export enum droppableTypes {
 }
 function App() {
   const [boards, setBoards] = useRecoilState(boardState);
-  const onDragEndToDeleteBoard = ({info, allBoards} : IOnKabanBoard) => {
-    const {destination, source, type} = info;     
-    // const copyToDos : IBoard[] = [];
-    // Object.keys(allBoards).forEach((boardKey) => {
-    //   copyToDos[boardKey] = [...allBoards[boardKey]];
-    // })
-    // copyToDos[source.droppableId].splice(source.index, 1);
-    // return copyToDos;
-  }
   const onDragEnd = (info : DropResult) => {
     const {destination, source, type} = info;
     console.log(info);
@@ -141,6 +141,7 @@ function App() {
       <GlobalStyle/>
       <DragDropContext onDragEnd={onDragEnd}>
         <Wrapper>
+          <Title>/* 👾what's wrong today?👾 */</Title>
           <Droppable type={droppableTypes.BOARD} droppableId={"boardMain"} direction='horizontal'>
           {(magic, snapshot) => 
             <Boards ref={magic.innerRef} {...magic.droppableProps}>
@@ -151,7 +152,7 @@ function App() {
               board.boardType ===  boardTypes.ADD?
               <AddBoard key={index} index={index}/>
               :
-              <DeleteBoard key={index} index={index}/>
+              null
             })}
             {magic.placeholder}
           </Boards>

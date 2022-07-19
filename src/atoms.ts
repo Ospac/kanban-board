@@ -24,17 +24,10 @@ export const boardState = atom<IBoard[]>({
     default: [
             {
                 title : '',
-                boardId: 0,
+                boardId: 1,
                 boardType: boardTypes.ADD,
                 content: []
             },
-            {
-                title : '',
-                boardId: 1,
-                boardType: boardTypes.DELETE,
-                content: []
-            },
-
         // {
         //     title: 'TO_DO',
         //     boardId: 1,

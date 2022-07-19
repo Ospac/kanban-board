@@ -11,7 +11,8 @@ const Wrapper = styled.div<{isDragging : boolean}>`
   padding-top: 15px;
   background-color: ${props => props.theme.boardColor};
   border-radius: 5px;
-  min-height: 200px;
+  min-height: 300px;
+  min-width: 300px;
   display: flex;
   flex-direction: column;
 `
@@ -89,7 +90,7 @@ function Board({boardData, index} : IBoardProps){
                         ref={magic.innerRef}
                         {...magic.droppableProps}>
                             {toDos.map((todo, index) => 
-                                <DraggableCard key={todo.id} toDoText={todo.text} toDoId={todo.id} index={index}/>
+                                <DraggableCard key={todo.id} boardId={boardId}toDoText={todo.text} toDoId={todo.id} index={index}/>
                             )}
                         {magic.placeholder}
                         </Area>

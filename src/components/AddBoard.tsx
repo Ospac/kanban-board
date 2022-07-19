@@ -5,7 +5,7 @@ import { boardState, boardTypes } from '../atoms';
 const Wrapper = styled.div`
   background-color: ${props => props.theme.boardColor};
   border-radius: 5px;
-  min-height: 200px;
+  min-height: 300px;
   min-width: 233px;
   display: flex;
   justify-content: center;
