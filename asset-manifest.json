@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/whatswrongtoday/static/js/main.9385a83f.js",
+    "main.js": "/whatswrongtoday/static/js/main.92094e88.js",
     "index.html": "/whatswrongtoday/index.html",
-    "main.9385a83f.js.map": "/whatswrongtoday/static/js/main.9385a83f.js.map"
+    "main.92094e88.js.map": "/whatswrongtoday/static/js/main.92094e88.js.map"
   },
   "entrypoints": [
-    "static/js/main.9385a83f.js"
+    "static/js/main.92094e88.js"
   ]
 }
