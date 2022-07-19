@@ -70,7 +70,7 @@ const GlobalStyle = createGlobalStyle`
 `
 
 const Title = styled.div`
-  font-size: 72px;
+  font-size: 50px;
   font-weight: bold;
   margin-bottom: 20px;
   padding : 10px 0;

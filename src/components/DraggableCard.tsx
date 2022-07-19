@@ -13,7 +13,8 @@ const Card = styled.div<{isDragging : boolean}>`
     padding: 2px 10px;
     border-radius: 5px;
     margin-bottom: 8px;
-    font-size: 15px;
+    font-size: 12px;
+    flex-wrap: wrap;
     background-color: ${props=> props.isDragging? props.theme.draggingCardColor : props.theme.cardColor};
     box-shadow: ${props=> props.isDragging? "2px 0px 5px rgba(0,0,0,0.5)" : "none"};
     &:hover{
@@ -35,6 +36,11 @@ const Card = styled.div<{isDragging : boolean}>`
         };
     };
 `
+const ToDoText = styled.p`
+    width: 70%;
+    word-break: break-all;
+    word-wrap: break-word;
+`;
 interface IDraggableCard{
     toDoText : string,
     toDoId : number,
@@ -61,7 +67,7 @@ function DraggableCard({toDoText, toDoId, index, boardId} : IDraggableCard) {
         {(magic, snapshot) => 
         <Card isDragging={snapshot.isDragging} ref={magic.innerRef }
         {...magic.draggableProps} {...magic.dragHandleProps}>
-            <div>{toDoText}</div>
+            <ToDoText>{toDoText.length > 19? toDoText.slice(0,19) + '...' : toDoText}</ToDoText>
             <button onClick={onDeleteCard}><RiDeleteBackFill/></button>
         </Card>}
     </Draggable>

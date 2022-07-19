@@ -11,8 +11,8 @@ const Wrapper = styled.div<{isDragging : boolean}>`
   padding-top: 15px;
   background-color: ${props => props.theme.boardColor};
   border-radius: 5px;
-  min-height: 300px;
-  min-width: 300px;
+  min-height: 250px;
+  min-width: 250px;
   display: flex;
   flex-direction: column;
 `
