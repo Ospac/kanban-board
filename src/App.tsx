@@ -75,7 +75,7 @@ const Title = styled.div`
   margin-bottom: 20px;
   padding : 10px 0;
   background-color: ${props => props.theme.boardColor};
-  color: #007c13;
+  color: ${props => props.theme.cardColor};
   text-align: center;
   
 `
